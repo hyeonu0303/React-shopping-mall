@@ -1,8 +1,14 @@
 /*eslint-disable */
 import './App.css';
+import {useState} from 'react';
 import {Navbar, Container,Nav,NavDropdown} from 'react-bootstrap';
-import mainBg from './img/bg.png'
+import mainBg from './img/bg.png';
+import data from './data.js';
+
+
 function App() {
+
+  let [shoes] = useState(data)
   return (
     <div className="App">
     <Navbar expand="lg" className="bg-body-tertiary">
@@ -32,25 +38,27 @@ function App() {
   
   <div className='container'>
     <div className='row'>
-      <div className='col-md-4'>
-        <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="80%"/>
-        <h4>상품명</h4>
-        <p>상품설명</p>
-      </div>
-      <div className='col-md-4'>
-        <img src="https://codingapple1.github.io/shop/shoes2.jpg" width="80%"/>
-        <h4>상품명</h4>
-        <p>상품설명</p>
-      </div>
-      <div className='col-md-4'>
-        <img src="https://codingapple1.github.io/shop/shoes3.jpg" width="80%"/>
-        <h4>상품명</h4>
-        <p>상품설명</p>
-      </div>
+      {
+        shoes.map((a,i)=>{
+          return(
+            <Product shoes={shoes} index={i} key={i}/>
+          )
+        })
+      }
     </div>
   </div>
   
   </div>
 )}
 
+const Product= (props)=>{
+  return(
+    <div className='col-md-4'>
+        <img src={`https://codingapple1.github.io/shop/shoes${props.index+1}.jpg`} width="80%"/>
+        <h4>{props.shoes[props.index].title}</h4>
+        <p>{props.shoes[props.index].content}</p>
+        <p>{props.shoes[props.index].price}</p>
+    </div>
+  )
+}
 export default App;
