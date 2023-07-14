@@ -4,11 +4,15 @@ import {useState} from 'react';
 import {Navbar, Container,Nav,NavDropdown} from 'react-bootstrap';
 import mainBg from './img/bg.png';
 import data from './data.js';
-import {Routes, Route, Link} from 'react-router-dom'
+import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom'
+import Detail from './routes/Detail'
 
 function App() {
 
   let [shoes] = useState(data)
+  //hook: 유용한 것들이 들어잇는 함수
+  //페이지 이동도와주는함수
+  let navigate = useNavigate();
   return (
     <div className="App container">
       
@@ -18,8 +22,11 @@ function App() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#link">Link</Nav.Link>
+
+          {/* -1하면 뒤로가짐 */}
+          <Nav.Link onClick={()=>{navigate('/')}}>Home</Nav.Link>
+          <Nav.Link onClick={()=>{navigate('/detail')}}>Cart</Nav.Link>
+          <Nav.Link onClick={()=>{navigate('/event')}}>Event</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
             <NavDropdown.Item href="#action/3.2">
@@ -35,8 +42,7 @@ function App() {
       </Navbar.Collapse>
     </Container>
   </Navbar>
-  <Link to="/">홈</Link>
-  <Link to="/detail">상세페이지</Link>
+  
   <Routes>
     <Route path="/" element={
     <>
@@ -65,10 +71,39 @@ function App() {
     </>
     } 
   />
+  {/* 이벤트페이지 */}
+  <Route path="/event" element={<Event/>}>
+    <Route path="one" element={<div>첫주문시 양배추즙 서비스</div>}></Route>
+    <Route path="two" element={<div>생일기념 쿠폰받기</div>}></Route>
+  </Route>
+  {/* 
+    Nestes Routes 
+    상위안에 하위를 넣어서보여줌 <Outlet></Outlet>과같이써야함
+  */}
+  <Route path="/about" element={<About/>}>
+    <Route path="member" element={<div>member</div>}></Route>
+    <Route path="location" element={<About/>}></Route>
+  </Route>
+
+  {/* 404page */}
+  <Route path="*" element={<div>없는페이지</div>}/>
   </Routes>
   </div>
 )}
-
+const About = (props) =>{
+  return(
+    <div>회사정보
+      <Outlet></Outlet>
+    </div>
+  )
+}
+const Event = (props) =>{
+  return(
+    <div>오늘의이벤트
+      <Outlet></Outlet>
+    </div>
+  )
+}
 const Product= (props)=>{
   return(
     <div className='col-md-4'>
@@ -80,21 +115,5 @@ const Product= (props)=>{
   )
 }
 //상세페이지 컴포넌트
-const Detail = (props) => {
-  return(
-  <div className="container">
-  <div className="row">
-    <div className="col-md-6">
-      <img src={`https://codingapple1.github.io/shop/shoes${props.i}.jpg`} width="100%" />
-    </div>
-    <div className="col-md-6">
-      <h4 className="pt-5">{props.shoes.title}</h4>
-      <p>{props.shoes.content}</p>
-      <p>{props.shoes.price}</p>
-      <button className="btn btn-danger">주문하기</button> 
-    </div>
-  </div>
-</div> 
-  )
-}
+
 export default App;
