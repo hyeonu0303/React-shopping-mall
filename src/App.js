@@ -6,10 +6,12 @@ import mainBg from './img/bg.png';
 import data from './data.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom'
 import Detail from './routes/Detail'
+import axios from 'axios'
 
 function App() {
-
-  let [shoes] = useState(data)
+  let [moreData,setMoreData] = useState();
+  let [shoes,setShoes] = useState(data)
+  let [count,setCount] = useState(2);
   //hook: 유용한 것들이 들어잇는 함수
   //페이지 이동도와주는함수
   let navigate = useNavigate();
@@ -58,16 +60,32 @@ function App() {
             })
           }
       </div>
+      <button onClick={(e)=>{
+        //로딩중 UI 띄우기~
+        axios.get(`https://codingapple1.github.io/shop/data${count}.json`).then((result)=>{
+          moreData = result.data;
+          console.log(result.data);
+          let combine = shoes.concat(moreData);
+          setShoes(combine);
+          //로딩중 UI 숨기기~
+        })
+        .catch((error)=>{
+          //로딩중 UI 숨기기
+          console.log('error', error.message)
+        })
+
+        //2개이상 요청할때 쓰기좋음 2개다 성공하면 실행해줌
+        // Promise.all([axios.get('/url1'),axios.get('/url2')].then(()=>{}))
+        axios.post('/data', {name : kim})
+      }}>전송</button>
     </div>
     </>
   }/>
   </Routes>
   <Routes>
-  <Route path="/detail" element={
+  <Route path="/detail/:id" element={
     <>
-      <Detail shoes={shoes[0]} i={1}/>
-      <Detail shoes={shoes[1]} i={2}/>
-      <Detail shoes={shoes[2]} i={3}/>
+      <Detail shoes={shoes}/>
     </>
     } 
   />
@@ -85,9 +103,9 @@ function App() {
     <Route path="location" element={<About/>}></Route>
   </Route>
 
-  {/* 404page */}
-  <Route path="*" element={<div>없는페이지</div>}/>
-  </Routes>
+  {/* 404page
+  <Route path="*" element={<div>없는페이지</div>}/>*/}
+  </Routes> 
   </div>
 )}
 const About = (props) =>{
@@ -115,5 +133,4 @@ const Product= (props)=>{
   )
 }
 //상세페이지 컴포넌트
-
 export default App;
