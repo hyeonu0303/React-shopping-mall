@@ -1,12 +1,14 @@
 import { useParams } from "react-router-dom";
-
+import { Nav } from "react-bootstrap";
 import {useEffect, useState} from 'react';
 /*eslint-disable */
 const Detail = (props) => {
 
+  //보관함해체
+
   let [alert, setAlert] = useState(true);
   let [count, setCount] = useState(0);
-  
+  let [tab,setTab] = useState(0);
   let {id} = useParams();
   let products = props.shoes.find(function(x){
     return x.id == id
@@ -27,9 +29,7 @@ const Detail = (props) => {
       }
   <div className="row">
     <div className="col-md-6">
-      <button onClick={()=>{count = count + 1; setCount(count)}}>버튼</button>
-      <p>{count}</p>
-      <img src={`https://codingapple1.github.io/shop/shoes${products.id}.jpg`} width="100%" />
+      <img src={`https://codingapple1.github.io/shop/shoes${products.id+1}.jpg`} width="100%" />
     </div>
     <div className="col-md-6">
       <h4 className="pt-5">{products.title}</h4>
@@ -38,8 +38,34 @@ const Detail = (props) => {
       <button className="btn btn-danger">주문하기</button> 
     </div>
   </div>
+  <Nav variant="tabs"  defaultActiveKey="link0">
+    <Nav.Item>
+      <Nav.Link onClick={()=>{setTab(0)}} eventKey="link0">버튼0</Nav.Link>
+    </Nav.Item>
+    <Nav.Item>
+      <Nav.Link onClick={()=>{setTab(1)}} eventKey="link1">버튼1</Nav.Link>
+    </Nav.Item>
+    <Nav.Item>
+      <Nav.Link onClick={()=>{setTab(2)}} eventKey="link2">버튼2</Nav.Link>
+    </Nav.Item>
+  </Nav>
+  <TabContent tab={tab}/>
 </div>
   )
 }
+function TabContent({tab}){
+  let [fade, setFade] = useState()
+  useEffect(()=>{
+    setTimeout(()=>{},1000)
+    setFade('anime-end')
+    return ()=>{
+      setFade('')
+    }
+  },[tab])
+  return (<div className={`anime-start ${fade}`}>
+    {[<div>안녕</div>,<div>내용1</div>,<div>내용2</div>][tab]}
+  </div>)
+}
+
 
 export default Detail;

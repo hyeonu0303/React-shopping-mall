@@ -4,3 +4,12 @@
   background-size: cover;
   background-position: center;
 }
+
+.anime-start{
+  opacity: 0;
+}
+
+.anime-end{
+  opacity: 1;
+  transition: opacity 1s;
+}
