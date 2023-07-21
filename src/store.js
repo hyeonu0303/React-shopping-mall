@@ -18,12 +18,15 @@ let items = createSlice({
   reducers:{
     changeCount(state,action){
       state[action.payload].count++
+    },
+    addItems(state,action){
+      return state.concat(action.payload);
     }
   }
 })
 
 //user.actions state변경함수남음
-export let {changeCount} = items.actions;
+export let {changeCount,addItems} = items.actions;
 
 //등록
 export default configureStore({

@@ -1,13 +1,18 @@
 /*eslint-disable */
 import "./App.css";
-import { createContext, useState } from "react";
+import { lazy, Suspense, createContext, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import mainBg from "./img/bg.png";
 import data from "./data.js";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
-import Detail from "./routes/Detail";
-import Cart from './routes/Cart';
 import axios from "axios";
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+// import Detail from "./routes/Detail";
+// import Cart from './routes/Cart';
+
+const Detail = lazy(()=> import ('./routes/Detail.js'));
+const Cart = lazy(()=> import ('./routes/Cart.js'));
+
 //contextAPI
 
 let Context1 = createContext()
@@ -22,6 +27,13 @@ function App() {
   //hook: 유용한 것들이 들어잇는 함수
   //페이지 이동도와주는함수
   let navigate = useNavigate();
+
+  // axios.get('https://codingapple1.github.io/userdata.json').then((a)=>{a.data})
+  let result = useQuery('작명',()=>{
+    return axios.get('https://codingapple1.github.io/userdata.json').then((a)=>a.data)
+  })
+
+
   return (
     <div className="App container">
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -66,10 +78,14 @@ function App() {
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
+            
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      
+
+
+
+      <Suspense fallback={<div>로딩중</div>}>
       <Routes>
         <Route
           path="/"
@@ -88,7 +104,6 @@ function App() {
                 </div>
                 <button
                   onClick={(e) => {
-                    //로딩중 UI 띄우기~
                     axios
                       .get(
                         `https://codingapple1.github.io/shop/data${count}.json`
@@ -98,16 +113,14 @@ function App() {
                         console.log(result.data);
                         let combine = shoes.concat(moreData);
                         setShoes(combine);
-                        //로딩중 UI 숨기기~
                       })
                       .catch((error) => {
-                        //로딩중 UI 숨기기
                         console.log("error", error.message);
                       });
 
                     //2개이상 요청할때 쓰기좋음 2개다 성공하면 실행해줌
                     // Promise.all([axios.get('/url1'),axios.get('/url2')].then(()=>{}))
-                    axios.post("/data", { name: kim });
+                    // axios.post("/data", { name: kim });
                   }}
                 >
                   전송
@@ -146,6 +159,7 @@ function App() {
         <Route path="/cart" element={<Cart/>}></Route>
   
       </Routes>
+      </Suspense>
     </div>
   );
 }

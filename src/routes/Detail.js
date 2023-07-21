@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 import { Nav } from "react-bootstrap";
 import {useEffect, useState} from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import {addItems} from '../store'
+import { useNavigate } from "react-router-dom";
 /*eslint-disable */
 const Detail = (props) => {
 
@@ -13,6 +16,13 @@ const Detail = (props) => {
   let products = props.shoes.find(function(x){
     return x.id == id
   })
+  //redux
+  let state = useSelector((state)=>state);
+  let dispatch = useDispatch();
+
+  //navigate
+  let navigate = useNavigate();
+
   useEffect(()=>{
     //mount,update시 코드실행해줌 2번실행될 수 있음
     //html로딩후 계산부분이 실행돼서 더 빠르게 html을 보여줌
@@ -21,6 +31,8 @@ const Detail = (props) => {
       setAlert(false);
     },2000)
   },[]) //이렇게입력하면 mount시 실행됨
+
+
   return(
   <div className="container">
       {
@@ -35,9 +47,16 @@ const Detail = (props) => {
       <h4 className="pt-5">{products.title}</h4>
       <p>{products.content}</p>
       <p>{products.price}</p>
-      <button className="btn btn-danger">주문하기</button> 
+      <button className="btn btn-danger" onClick={(e)=>{
+        e.preventDefault();
+        dispatch(addItems({id:products.id, name : products.title, count: 1}))
+        navigate('/cart')
+        console.log(state.items)
+      }}>주문하기</button> 
     </div>
   </div>
+
+
   <Nav variant="tabs"  defaultActiveKey="link0">
     <Nav.Item>
       <Nav.Link onClick={()=>{setTab(0)}} eventKey="link0">버튼0</Nav.Link>
@@ -50,9 +69,13 @@ const Detail = (props) => {
     </Nav.Item>
   </Nav>
   <TabContent tab={tab}/>
+
 </div>
   )
 }
+
+
+
 function TabContent({tab}){
   let [fade, setFade] = useState()
   useEffect(()=>{
